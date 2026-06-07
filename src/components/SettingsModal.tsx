@@ -8,17 +8,14 @@ interface Props {
 
 export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const { 
-    apiMode, setApiMode, 
     geminiModel, setGeminiModel,
     apiKey, setApiKey, 
-    gcpProjectId, setGcpProjectId,
     githubToken, setGithubToken,
     gistId, setGistId
   } = useApi();
   
   const [localGeminiModel, setLocalGeminiModel] = useState(geminiModel);
   const [localApiKey, setLocalApiKey] = useState(apiKey);
-  const [localProjectId, setLocalProjectId] = useState(gcpProjectId);
   const [localGithubToken, setLocalGithubToken] = useState(githubToken);
   const [localGistId, setLocalGistId] = useState(gistId);
 
@@ -27,7 +24,6 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const handleSave = () => {
     setGeminiModel(localGeminiModel);
     setApiKey(localApiKey);
-    setGcpProjectId(localProjectId);
     setGithubToken(localGithubToken);
     setGistId(localGistId);
     onClose();
