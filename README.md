@@ -1,8 +1,7 @@
 # Dutch Writing Lab 🇳🇱
+*Made by Soheil Solhjoo (2026)*
 
-**Made by Soheil Solhjoo (2026)**
-
-The Dutch Writing Lab is an open-source, client-side React application designed to help language learners practice and perfect their Dutch writing. By leveraging the power of Google's Gemini API and the CEFR framework, it acts as your personal, strict, and highly accurate Dutch language tutor.
+**Dutch Writing Lab** is an open-source, client-side React application designed to help language learners practice and perfect their Dutch writing. By leveraging the power of Google's Gemini API and the CEFR framework, it acts as your personal, strict, and highly accurate Dutch language tutor.
 
 ![Dutch Writing Lab UI](/public/favicon.png) <!-- Update with actual screenshot if needed -->
 
@@ -24,6 +23,8 @@ The Dutch Writing Lab is an open-source, client-side React application designed 
     *   **Cross-Device Sync:** Link a GitHub Personal Access Token (PAT) to automatically back up your saved history to a Secret GitHub Gist. Pull your history onto your phone or another computer seamlessly!
 *   **🌙 Dark Mode & Responsive Design**
     *   Fully optimized for both desktop and mobile web browsers.
+
+---
 
 ## How to Set Up and Use
 
@@ -47,6 +48,8 @@ If you want to save your generated texts and access them on your phone:
 5. In the Dutch Writing Lab, open **⚙️ Cloud Settings** and paste the token into the "GitHub PAT" field. Leave the "Gist ID" blank.
 6. Now, whenever you click **💾 Save to History** in Phase 1, the app will automatically create a secret backup in your GitHub account. 
 7. On your phone, enter the same PAT and the newly generated Gist ID (which will populate automatically on your PC) into the settings, and hit **☁️ Pull** to download your texts!
+
+---
 
 ## Running the App Locally
 
@@ -77,4 +80,4 @@ If you want to run the code on your own machine or contribute to the project:
 *   **Cloud Storage:** GitHub Gists API
 
 ---
-*Veel succes met het leren van het Nederlands!* (Good luck learning Dutch!)
+*Veel succes met het leren van het Nederlands!*
