@@ -160,7 +160,7 @@ function AppContent() {
     <div className="app-container">
       <header className="app-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img src="/favicon.png" alt="Study Monitor Icon" style={{ width: '32px', height: '32px' }} />
+          <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="Study Monitor Icon" style={{ width: '32px', height: '32px' }} />
           <h1>Dutch Writing Lab</h1>
         </div>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
