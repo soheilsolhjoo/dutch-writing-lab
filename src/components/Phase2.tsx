@@ -16,7 +16,7 @@ export const Phase2: React.FC<Phase2Props> = ({
   result, setResult, 
   inputText, setInputText 
 }) => {
-  const { apiMode, apiKey, gcpProjectId, isConfigured } = useApi();
+  const { apiMode, geminiModel, apiKey, gcpProjectId, isConfigured } = useApi();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'analysis' | 'clean'>('analysis');
@@ -26,7 +26,7 @@ export const Phase2: React.FC<Phase2Props> = ({
     setLoading(true);
     setError(null);
     try {
-      const res = await auditUserText(inputText, targetLevel, apiMode, { apiKey, gcpProjectId });
+      const res = await auditUserText(inputText, targetLevel, geminiModel, apiMode, { apiKey, gcpProjectId });
       setResult(res);
     } catch (err: any) {
       setError(err.message || "Failed to audit text.");

@@ -34,7 +34,7 @@ export const Phase1: React.FC<Phase1Props> = ({
   result, setResult,
   handlePushToCloud
 }) => {
-  const { apiMode, apiKey, gcpProjectId, isConfigured, githubToken } = useApi();
+  const { apiMode, geminiModel, apiKey, gcpProjectId, isConfigured, githubToken } = useApi();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +53,7 @@ export const Phase1: React.FC<Phase1Props> = ({
     setLoading(true);
     setError(null);
     try {
-      const res = await generateMasterText(level, topic, instructions, apiMode, { apiKey, gcpProjectId });
+      const res = await generateMasterText(level, topic, instructions, geminiModel, apiMode, { apiKey, gcpProjectId });
       setResult(res);
     } catch (err: any) {
       setError(err.message || "Failed to generate text.");

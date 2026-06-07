@@ -9,12 +9,14 @@ interface Props {
 export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const { 
     apiMode, setApiMode, 
+    geminiModel, setGeminiModel,
     apiKey, setApiKey, 
     gcpProjectId, setGcpProjectId,
     githubToken, setGithubToken,
     gistId, setGistId
   } = useApi();
   
+  const [localGeminiModel, setLocalGeminiModel] = useState(geminiModel);
   const [localApiKey, setLocalApiKey] = useState(apiKey);
   const [localProjectId, setLocalProjectId] = useState(gcpProjectId);
   const [localGithubToken, setLocalGithubToken] = useState(githubToken);
@@ -23,6 +25,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const handleSave = () => {
+    setGeminiModel(localGeminiModel);
     setApiKey(localApiKey);
     setGcpProjectId(localProjectId);
     setGithubToken(localGithubToken);
@@ -36,7 +39,22 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
         <h2>⚙️ Cloud Settings</h2>
         
         <h3 style={{ marginTop: '20px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>Gemini API Settings</h3>
+        
         <div className="form-group" style={{ marginTop: '15px' }}>
+          <label htmlFor="geminiModel">Model Selection</label>
+          <select 
+            id="geminiModel"
+            value={localGeminiModel}
+            onChange={(e) => setLocalGeminiModel(e.target.value)}
+            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+          >
+            <option value="gemini-3.5-flash">Gemini 3.5 Flash (Fast & Agentic)</option>
+            <option value="gemini-3.5-pro">Gemini 3.5 Pro (Best Reasoning & Accuracy)</option>
+            <option value="gemini-3.1-pro">Gemini 3.1 Pro (Reliable Legacy)</option>
+          </select>
+        </div>
+
+        <div className="form-group">
           <label>API Mode</label>
           <div className="help-text">
             If you don't have a backend proxy configured for GCP, select "Free Gemini API Key". You can generate a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>.

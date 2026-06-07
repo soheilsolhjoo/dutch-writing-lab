@@ -6,6 +6,8 @@ type Theme = 'light' | 'dark';
 interface ApiContextType {
   apiMode: ApiMode;
   setApiMode: (mode: ApiMode) => void;
+  geminiModel: string;
+  setGeminiModel: (model: string) => void;
   apiKey: string;
   setApiKey: (key: string) => void;
   gcpProjectId: string;
@@ -24,6 +26,9 @@ const ApiContext = createContext<ApiContextType | undefined>(undefined);
 export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [apiMode, setApiModeState] = useState<ApiMode>(() => {
     return (localStorage.getItem('apiMode') as ApiMode) || 'free';
+  });
+  const [geminiModel, setGeminiModelState] = useState<string>(() => {
+    return localStorage.getItem('geminiModel') || 'gemini-3.5-flash';
   });
   const [apiKey, setApiKeyState] = useState<string>(() => {
     return localStorage.getItem('apiKey') || '';
@@ -52,6 +57,11 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setApiMode = (mode: ApiMode) => {
     setApiModeState(mode);
     localStorage.setItem('apiMode', mode);
+  };
+
+  const setGeminiModel = (model: string) => {
+    setGeminiModelState(model);
+    localStorage.setItem('geminiModel', model);
   };
 
   const setApiKey = (key: string) => {
@@ -85,6 +95,7 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     <ApiContext.Provider
       value={{
         apiMode, setApiMode,
+        geminiModel, setGeminiModel,
         apiKey, setApiKey,
         gcpProjectId, setGcpProjectId,
         githubToken, setGithubToken,

@@ -86,6 +86,7 @@ You must output a JSON object with EXACTLY the following structure. No markdown 
 
 export const callGeminiAPI = async (
   prompt: string,
+  model: string,
   apiMode: 'free' | 'gcp',
   credentials: { apiKey?: string; gcpProjectId?: string }
 ): Promise<string> => {
@@ -102,7 +103,7 @@ export const callGeminiAPI = async (
   }
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${credentials.apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${credentials.apiKey}`,
     {
       method: 'POST',
       headers: {
@@ -136,21 +137,23 @@ export const generateMasterText = async (
   level: string,
   topic: string,
   instructions: string,
+  model: string,
   apiMode: 'free' | 'gcp',
   credentials: { apiKey?: string; gcpProjectId?: string }
 ): Promise<GenerationResult> => {
   const prompt = buildPhase1Prompt(level, topic, instructions);
-  const rawResponse = await callGeminiAPI(prompt, apiMode, credentials);
+  const rawResponse = await callGeminiAPI(prompt, model, apiMode, credentials);
   return JSON.parse(rawResponse) as GenerationResult;
 };
 
 export const auditUserText = async (
   text: string,
   targetLevel: string,
+  model: string,
   apiMode: 'free' | 'gcp',
   credentials: { apiKey?: string; gcpProjectId?: string }
 ): Promise<AuditResult> => {
   const prompt = buildPhase2Prompt(text, targetLevel);
-  const rawResponse = await callGeminiAPI(prompt, apiMode, credentials);
+  const rawResponse = await callGeminiAPI(prompt, model, apiMode, credentials);
   return JSON.parse(rawResponse) as AuditResult;
 };
