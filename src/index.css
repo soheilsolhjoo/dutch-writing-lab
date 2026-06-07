@@ -272,6 +272,8 @@ button {
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .help-text {
@@ -454,5 +456,13 @@ button {
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
+  }
+
+  .input-with-btn {
+    flex-direction: column;
+  }
+
+  .input-with-btn button {
+    width: 100%;
   }
 }

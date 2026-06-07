@@ -50,60 +50,22 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
           >
             <option value="gemini-3.5-flash">Gemini 3.5 Flash (Fast & Agentic)</option>
             <option value="gemini-3.5-pro">Gemini 3.5 Pro (Best Reasoning & Accuracy)</option>
-            <option value="gemini-3.1-pro">Gemini 3.1 Pro (Reliable Legacy)</option>
           </select>
         </div>
 
         <div className="form-group">
-          <label>API Mode</label>
+          <label htmlFor="apiKey">Gemini API Key</label>
           <div className="help-text">
-            If you don't have a backend proxy configured for GCP, select "Free Gemini API Key". You can generate a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>.
+            You can generate a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>.
           </div>
-          <div className="radio-group">
-            <label>
-              <input
-                type="radio"
-                value="free"
-                checked={apiMode === 'free'}
-                onChange={() => setApiMode('free')}
-              />
-              Free Gemini API Key
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="gcp"
-                checked={apiMode === 'gcp'}
-                onChange={() => setApiMode('gcp')}
-              />
-              GCP Project ID (Requires Proxy)
-            </label>
-          </div>
+          <input
+            id="apiKey"
+            type="password"
+            value={localApiKey}
+            onChange={(e) => setLocalApiKey(e.target.value)}
+            placeholder="AIzaSy..."
+          />
         </div>
-
-        {apiMode === 'free' ? (
-          <div className="form-group">
-            <label htmlFor="apiKey">Gemini API Key</label>
-            <input
-              id="apiKey"
-              type="password"
-              value={localApiKey}
-              onChange={(e) => setLocalApiKey(e.target.value)}
-              placeholder="AIzaSy..."
-            />
-          </div>
-        ) : (
-          <div className="form-group">
-            <label htmlFor="projectId">GCP Project ID</label>
-            <input
-              id="projectId"
-              type="text"
-              value={localProjectId}
-              onChange={(e) => setLocalProjectId(e.target.value)}
-              placeholder="my-project-123"
-            />
-          </div>
-        )}
 
         <h3 style={{ marginTop: '30px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>GitHub Cloud Sync</h3>
         <div className="help-text" style={{ marginTop: '10px' }}>
