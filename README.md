@@ -74,7 +74,7 @@ If you want to run the code on your own machine or contribute to the project:
 ## Tech Stack
 *   **Frontend:** React 18, TypeScript, Vite
 *   **Styling:** Vanilla CSS (CSS Variables for Dark Mode)
-*   **AI Backend:** Google Gemini 2.5 Flash via REST API
+*   **AI Backend:** Google Gemini (several models available) via REST API
 *   **Cloud Storage:** GitHub Gists API
 
 ---
