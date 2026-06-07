@@ -1,9 +1,7 @@
-# Dutch Writing Lab 🇳🇱
+# <img src="/public/favicon.png" alt="Study Monitor Logo" height="30"> Dutch Writing Lab 🇳🇱
 *Made by Soheil Solhjoo (2026)*
 
 **Dutch Writing Lab** is an open-source, client-side React application designed to help language learners practice and perfect their Dutch writing. By leveraging the power of Google's Gemini API and the CEFR framework, it acts as your personal, strict, and highly accurate Dutch language tutor.
-
-![Dutch Writing Lab UI](/public/favicon.png) <!-- Update with actual screenshot if needed -->
 
 ## Features
 
