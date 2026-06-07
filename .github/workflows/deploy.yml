@@ -37,20 +37,18 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: lab-app/package-lock.json
+          cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm install
-        working-directory: lab-app
       - name: Build
         run: npm run build
-        working-directory: lab-app
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload the dist folder from our project
-          path: './lab-app/dist'
+          path: './dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
