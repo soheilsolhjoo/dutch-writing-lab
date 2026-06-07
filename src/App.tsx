@@ -89,15 +89,41 @@ function AppContent() {
   };
 
   const handlePullFromCloud = async () => {
-    if (!githubToken || !gistId) {
-      alert("Please configure your GitHub PAT and Gist ID in Cloud Settings first.");
+    if (!githubToken) {
+      alert("Please configure your GitHub PAT in Cloud Settings first.");
       setIsSettingsOpen(true);
       return;
     }
 
     setSyncing(true);
     try {
-      const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+      let targetGistId = gistId;
+
+      // Auto-discovery logic: If Gist ID is missing, search for it
+      if (!targetGistId) {
+        const listResponse = await fetch(`https://api.github.com/gists`, {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+          }
+        });
+        
+        if (!listResponse.ok) throw new Error("Failed to list Gists");
+        
+        const gists = await listResponse.json();
+        const foundGist = gists.find((g: any) => g.files["dutch_lab_history.json"]);
+        
+        if (foundGist) {
+          targetGistId = foundGist.id;
+          setGistId(targetGistId); // Save for future use
+        } else {
+          alert("No Dutch Writing Lab history found on your GitHub account. Try pushing from your other device first!");
+          setSyncing(false);
+          return;
+        }
+      }
+
+      const response = await fetch(`https://api.github.com/gists/${targetGistId}`, {
         headers: {
           'Authorization': `token ${githubToken}`,
           'Accept': 'application/vnd.github.v3+json',
@@ -117,7 +143,7 @@ function AppContent() {
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to pull from cloud. Check your Gist ID and token.");
+      alert("Failed to pull from cloud. Check your token and internet connection.");
     } finally {
       setSyncing(false);
     }
