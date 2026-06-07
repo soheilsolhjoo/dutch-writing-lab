@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/28686842/README.md)
 # Dutch Writing Lab 🇳🇱
 
 **Made by Soheil Solhjoo (2026)**
