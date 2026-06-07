@@ -313,6 +313,7 @@ button {
 /* Toggles & Tagged Text */
 .toggles-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -382,6 +383,21 @@ button {
   border-color: var(--primary-color);
 }
 
+.toggle-btn.btn-connector.active {
+  background-color: var(--warning);
+  border-color: var(--warning);
+}
+
+.toggle-btn.btn-verb.active {
+  background-color: var(--success);
+  border-color: var(--success);
+}
+
+.toggle-btn.btn-idiom.active {
+  background-color: #9333ea;
+  border-color: #9333ea;
+}
+
 .sentence-block {
   margin-bottom: 20px;
   padding-bottom: 20px;
@@ -433,6 +449,12 @@ button {
 
 .mt-4 { margin-top: 1rem; }
 
+.result-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .controls-row {
@@ -449,6 +471,18 @@ button {
   }
 
   .view-toggle {
+    flex-direction: column;
+  }
+
+  .toggles-row {
+    flex-direction: column;
+  }
+
+  .toggles-row .toggle-btn {
+    width: 100%;
+  }
+
+  .result-actions {
     flex-direction: column;
   }
 

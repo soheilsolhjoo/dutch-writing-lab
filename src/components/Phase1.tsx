@@ -79,7 +79,17 @@ export const Phase1: React.FC<Phase1Props> = ({
     if (!result) return;
     
     const savedHistory = localStorage.getItem('dutchLabHistory');
-    const historyArray = savedHistory ? JSON.parse(savedHistory) : [];
+    let historyArray = savedHistory ? JSON.parse(savedHistory) : [];
+    
+    // Check for duplicates (same topic and same content)
+    const isDuplicate = historyArray.some((item: any) => 
+      item.topic === topic && item.result.rawText === result.rawText
+    );
+
+    if (isDuplicate) {
+      alert('This text is already in your history!');
+      return;
+    }
     
     const newItem = {
       id: Date.now().toString(),
@@ -167,19 +177,19 @@ export const Phase1: React.FC<Phase1Props> = ({
             
             <div className="toggles-row">
               <button 
-                className={`toggle-btn ${showConnectors ? 'active' : ''}`}
+                className={`toggle-btn btn-connector ${showConnectors ? 'active' : ''}`}
                 onClick={() => setShowConnectors(!showConnectors)}
               >
                 Show Connectors
               </button>
               <button 
-                className={`toggle-btn ${showVerbs ? 'active' : ''}`}
+                className={`toggle-btn btn-verb ${showVerbs ? 'active' : ''}`}
                 onClick={() => setShowVerbs(!showVerbs)}
               >
                 Show Verbs
               </button>
               <button 
-                className={`toggle-btn ${showIdioms ? 'active' : ''}`}
+                className={`toggle-btn btn-idiom ${showIdioms ? 'active' : ''}`}
                 onClick={() => setShowIdioms(!showIdioms)}
               >
                 Show Idioms/Expressions
@@ -215,7 +225,7 @@ export const Phase1: React.FC<Phase1Props> = ({
               </div>
             </div>
             
-            <div style={{ display: 'flex', gap: '10px', marginTop: '1rem' }}>
+            <div className="result-actions">
               <button onClick={downloadMd} className="btn-secondary">Download Text as .md</button>
               <button onClick={handleSaveToHistory} className="btn-primary">💾 Save to History</button>
             </div>
