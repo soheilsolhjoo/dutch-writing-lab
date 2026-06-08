@@ -11,13 +11,17 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
     geminiModel, setGeminiModel,
     apiKey, setApiKey, 
     githubToken, setGithubToken,
-    gistId, setGistId
+    gistId, setGistId,
+    paragraphCount, setParagraphCount,
+    wordCount, setWordCount
   } = useApi();
   
   const [localGeminiModel, setLocalGeminiModel] = useState(geminiModel);
   const [localApiKey, setLocalApiKey] = useState(apiKey);
   const [localGithubToken, setLocalGithubToken] = useState(githubToken);
   const [localGistId, setLocalGistId] = useState(gistId);
+  const [localParagraphCount, setLocalParagraphCount] = useState(paragraphCount);
+  const [localWordCount, setLocalWordCount] = useState(wordCount);
 
   if (!isOpen) return null;
 
@@ -26,6 +30,8 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
     setApiKey(localApiKey);
     setGithubToken(localGithubToken);
     setGistId(localGistId);
+    setParagraphCount(localParagraphCount);
+    setWordCount(localWordCount);
     onClose();
   };
 
@@ -34,6 +40,30 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
       <div className="modal-content">
         <h2>⚙️ Cloud Settings</h2>
         
+        <h3 style={{ marginTop: '20px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>Text Generation Limits</h3>
+        <div className="controls-row" style={{ marginTop: '15px' }}>
+          <div className="form-group flex-grow">
+            <label htmlFor="paragraphCount">Paragraphs</label>
+            <input
+              id="paragraphCount"
+              type="text"
+              value={localParagraphCount}
+              onChange={(e) => setLocalParagraphCount(e.target.value)}
+              placeholder="e.g. 5"
+            />
+          </div>
+          <div className="form-group flex-grow">
+            <label htmlFor="wordCount">Words</label>
+            <input
+              id="wordCount"
+              type="text"
+              value={localWordCount}
+              onChange={(e) => setLocalWordCount(e.target.value)}
+              placeholder="e.g. 100-250"
+            />
+          </div>
+        </div>
+
         <h3 style={{ marginTop: '20px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>Gemini API Settings</h3>
         
         <div className="form-group" style={{ marginTop: '15px' }}>

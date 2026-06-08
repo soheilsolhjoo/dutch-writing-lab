@@ -16,6 +16,10 @@ interface ApiContextType {
   setGithubToken: (token: string) => void;
   gistId: string;
   setGistId: (id: string) => void;
+  paragraphCount: string;
+  setParagraphCount: (count: string) => void;
+  wordCount: string;
+  setWordCount: (count: string) => void;
   theme: Theme;
   setTheme: (theme: Theme) => void;
   isConfigured: boolean;
@@ -44,6 +48,12 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const [theme, setThemeState] = useState<Theme>(() => {
     return (localStorage.getItem('theme') as Theme) || 'light';
+  });
+  const [paragraphCount, setParagraphCountState] = useState<string>(() => {
+    return localStorage.getItem('paragraphCount') || '5';
+  });
+  const [wordCount, setWordCountState] = useState<string>(() => {
+    return localStorage.getItem('wordCount') || '100-250';
   });
 
   useEffect(() => {
@@ -84,6 +94,16 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('gistId', id);
   };
 
+  const setParagraphCount = (count: string) => {
+    setParagraphCountState(count);
+    localStorage.setItem('paragraphCount', count);
+  };
+
+  const setWordCount = (count: string) => {
+    setWordCountState(count);
+    localStorage.setItem('wordCount', count);
+  };
+
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
     localStorage.setItem('theme', newTheme);
@@ -100,6 +120,8 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         gcpProjectId, setGcpProjectId,
         githubToken, setGithubToken,
         gistId, setGistId,
+        paragraphCount, setParagraphCount,
+        wordCount, setWordCount,
         theme, setTheme,
         isConfigured,
       }}

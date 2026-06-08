@@ -14,7 +14,9 @@ export interface AuditResult {
 const buildPhase1Prompt = (
   level: string,
   topic: string,
-  instructions: string
+  instructions: string,
+  paragraphCount: string = "5",
+  wordCount: string = "100-250"
 ) => `You are an expert Dutch language instructor.
 Generate a Dutch text suitable for a CEFR ${level} learner.
 
@@ -22,8 +24,8 @@ Topic: ${topic}
 Additional Instructions: ${instructions}
 
 Constraints:
-- You MUST write exactly 5 paragraphs, unless the specific instructions strongly dictate a shorter format. Do not default to 3 paragraphs.
-- Strictly between 100 and 250 words total.
+- You MUST write exactly ${paragraphCount} paragraphs, unless the specific instructions strongly dictate a shorter format. Do not default to 3 paragraphs.
+- Strictly between ${wordCount} words total.
 - Format like a standard essay (e.g., TOEFL-style).
 - Use natural phrasing, appropriate connectors, and idioms for a ${level} level.
 
@@ -139,9 +141,11 @@ export const generateMasterText = async (
   instructions: string,
   model: string,
   apiMode: 'free' | 'gcp',
-  credentials: { apiKey?: string; gcpProjectId?: string }
+  credentials: { apiKey?: string; gcpProjectId?: string },
+  paragraphCount: string = "5",
+  wordCount: string = "100-250"
 ): Promise<GenerationResult> => {
-  const prompt = buildPhase1Prompt(level, topic, instructions);
+  const prompt = buildPhase1Prompt(level, topic, instructions, paragraphCount, wordCount);
   const rawResponse = await callGeminiAPI(prompt, model, apiMode, credentials);
   return JSON.parse(rawResponse) as GenerationResult;
 };
