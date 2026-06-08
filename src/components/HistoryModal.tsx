@@ -88,8 +88,8 @@ export const HistoryModal: React.FC<Props> = ({ isOpen, onClose, onLoad, onDelet
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             {filteredHistory.map(item => (
-              <div key={item.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
+              <div key={item.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+                <div style={{ flex: '1 1 200px' }}>
                   <strong>{new Date(item.timestamp).toLocaleString()}</strong>
                   <div style={{ marginTop: '5px' }}>
                     <span style={{ display: 'inline-block', padding: '2px 8px', background: 'var(--primary-color)', color: 'white', borderRadius: '4px', fontSize: '0.8em', marginRight: '10px' }}>
@@ -99,10 +99,10 @@ export const HistoryModal: React.FC<Props> = ({ isOpen, onClose, onLoad, onDelet
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  <button onClick={() => { onLoad(item); onClose(); }} className="btn-primary" style={{ padding: '8px 16px' }}>
+                  <button onClick={() => { onLoad(item); onClose(); }} className="btn-primary" style={{ padding: '6px 12px', width: '70px', textAlign: 'center' }}>
                     📖 Load
                   </button>
-                  <button onClick={() => handleDelete(item.id)} className="btn-secondary" style={{ padding: '8px 16px', color: 'var(--danger)', borderColor: 'var(--danger)' }}>
+                  <button onClick={() => handleDelete(item.id)} className="btn-secondary" style={{ padding: '6px 12px', color: 'var(--danger)', borderColor: 'var(--danger)', width: '70px', textAlign: 'center' }}>
                     ❌ Delete
                   </button>
                 </div>
