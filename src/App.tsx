@@ -217,7 +217,12 @@ function AppContent() {
 
       <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
-      <HistoryModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} onLoad={handleLoadHistory} />
+      <HistoryModal 
+        isOpen={isHistoryOpen} 
+        onClose={() => setIsHistoryOpen(false)} 
+        onLoad={handleLoadHistory}
+        onDeletePush={handlePushToCloud}
+      />
     </div>
   );
 }
