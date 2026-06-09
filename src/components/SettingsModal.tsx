@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApi } from '../context/ApiContext';
+import { fetchAvailableModels, type GeminiModel } from '../services/gemini';
 
 interface Props {
   isOpen: boolean;
@@ -22,6 +23,17 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [localGistId, setLocalGistId] = useState(gistId);
   const [localParagraphCount, setLocalParagraphCount] = useState(paragraphCount);
   const [localWordCount, setLocalWordCount] = useState(wordCount);
+  const [availableModels, setAvailableModels] = useState<GeminiModel[]>([]);
+
+  useEffect(() => {
+    if (localApiKey) {
+      fetchAvailableModels(localApiKey).then(models => {
+        if (models.length > 0) {
+          setAvailableModels(models);
+        }
+      });
+    }
+  }, [localApiKey]);
 
   if (!isOpen) return null;
 
@@ -68,15 +80,27 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
         
         <div className="form-group" style={{ marginTop: '15px' }}>
           <label htmlFor="geminiModel">Model Selection</label>
-          <select 
+          <input 
             id="geminiModel"
+            type="text"
+            list="models-list"
             value={localGeminiModel}
             onChange={(e) => setLocalGeminiModel(e.target.value)}
             style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-          >
-            <option value="gemini-3.5-flash">Gemini 3.5 Flash (Fast & Agentic)</option>
-            <option value="gemini-3.5-pro">Gemini 3.5 Pro (Best Reasoning & Accuracy)</option>
-          </select>
+            placeholder="e.g. gemini-3.5-flash"
+          />
+          <datalist id="models-list">
+            {availableModels.length > 0 ? (
+              availableModels.map(model => (
+                <option key={model.name} value={model.name}>{model.displayName}</option>
+              ))
+            ) : (
+              <>
+                <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+                <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+              </>
+            )}
+          </datalist>
         </div>
 
         <div className="form-group">

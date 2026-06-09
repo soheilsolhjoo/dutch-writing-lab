@@ -135,6 +135,39 @@ export const callGeminiAPI = async (
   return content;
 };
 
+export interface GeminiModel {
+  name: string;
+  displayName: string;
+}
+
+export const fetchAvailableModels = async (apiKey: string): Promise<GeminiModel[]> => {
+  if (!apiKey) return [];
+  
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+    if (!response.ok) return [];
+    
+    const data = await response.json();
+    return data.models
+      .filter((model: any) => model.supportedGenerationMethods?.includes('generateContent'))
+      .filter((model: any) => {
+        const name = model.name.toLowerCase();
+        return name.includes('flash') && 
+               !name.includes('vision') && 
+               !name.includes('image') && 
+               !name.includes('tts') && 
+               !name.includes('audio');
+      })
+      .map((model: any) => ({
+        name: model.name.replace('models/', ''),
+        displayName: model.displayName || model.name.replace('models/', '')
+      }));
+  } catch (error) {
+    console.error("Failed to fetch models:", error);
+    return [];
+  }
+};
+
 export const generateMasterText = async (
   level: string,
   topic: string,
