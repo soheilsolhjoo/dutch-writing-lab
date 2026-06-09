@@ -86,6 +86,21 @@ You must output a JSON object with EXACTLY the following structure. No markdown 
 }
 `;
 
+const buildTopicGenerationPrompt = (level: string) => `You are an expert Dutch language instructor.
+Generate 3 distinct, creative, and challenging essay topics suitable for a CEFR ${level} language learner.
+The topics should be appropriate for an essay format (e.g., opinion, discussion, advantages/disadvantages).
+Do not repeat common topics like "small town vs big city" or "free education".
+
+You must output a JSON object with EXACTLY the following structure. No markdown formatting outside the JSON, just the raw JSON object:
+{
+  "topics": [
+    "First topic string",
+    "Second topic string",
+    "Third topic string"
+  ]
+}
+`;
+
 export const callGeminiAPI = async (
   prompt: string,
   model: string,
@@ -193,4 +208,16 @@ export const auditUserText = async (
   const prompt = buildPhase2Prompt(text, targetLevel);
   const rawResponse = await callGeminiAPI(prompt, model, apiMode, credentials);
   return JSON.parse(rawResponse) as AuditResult;
+};
+
+export const generateTopics = async (
+  level: string,
+  model: string,
+  apiMode: 'free' | 'gcp',
+  credentials: { apiKey?: string; gcpProjectId?: string }
+): Promise<string[]> => {
+  const prompt = buildTopicGenerationPrompt(level);
+  const rawResponse = await callGeminiAPI(prompt, model, apiMode, credentials);
+  const data = JSON.parse(rawResponse);
+  return data.topics || [];
 };

@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ApiProvider, useApi } from './context/ApiContext';
 import { SettingsModal } from './components/SettingsModal';
 import { AboutModal } from './components/AboutModal';
 import { HistoryModal, type HistoryItem } from './components/HistoryModal';
+import { TopicBankModal } from './components/TopicBankModal';
 import { Phase1 } from './components/Phase1';
 import { Phase2 } from './components/Phase2';
 import type { GenerationResult, AuditResult } from './services/gemini';
@@ -16,12 +17,25 @@ function AppContent() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isTopicBankOpen, setIsTopicBankOpen] = useState(false);
   
   // Phase 1 State
   const [phase1Level, setPhase1Level] = useState('B2');
   const [phase1Topic, setPhase1Topic] = useState('');
   const [phase1Instructions, setPhase1Instructions] = useState('');
   const [phase1Result, setPhase1Result] = useState<GenerationResult | null>(null);
+
+  // History State for Phase1 checking
+  const [history, setHistory] = useState<HistoryItem[]>(() => {
+    const saved = localStorage.getItem('dutchLabHistory');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Re-read history when opening phase 1 or tabs change
+  useEffect(() => {
+    const saved = localStorage.getItem('dutchLabHistory');
+    setHistory(saved ? JSON.parse(saved) : []);
+  }, [activeTab]);
 
   // Phase 2 State
   const [phase2TargetLevel, setPhase2TargetLevel] = useState('B2');
@@ -43,8 +57,15 @@ function AppContent() {
     
     setSyncing(true);
     try {
-      const localData = localStorage.getItem('dutchLabHistory') || '[]';
-      const content = { "dutch_lab_history.json": { content: localData } };
+      const historyData = localStorage.getItem('dutchLabHistory') || '[]';
+      const topicsData = localStorage.getItem('customTopics') || '[]';
+      
+      const payload = {
+        history: JSON.parse(historyData),
+        topics: JSON.parse(topicsData)
+      };
+
+      const content = { "dutch_lab_data.json": { content: JSON.stringify(payload, null, 2) } };
       
       let response;
       if (gistId) {
@@ -111,13 +132,13 @@ function AppContent() {
         if (!listResponse.ok) throw new Error("Failed to list Gists");
         
         const gists = await listResponse.json();
-        const foundGist = gists.find((g: any) => g.files["dutch_lab_history.json"]);
+        const foundGist = gists.find((g: any) => g.files["dutch_lab_data.json"] || g.files["dutch_lab_history.json"]);
         
         if (foundGist) {
           targetGistId = foundGist.id;
           setGistId(targetGistId); // Save for future use
         } else {
-          alert("No Dutch Writing Lab history found on your GitHub account. Try pushing from your other device first!");
+          alert("No Dutch Writing Lab data found on your GitHub account. Try pushing from your other device first!");
           setSyncing(false);
           return;
         }
@@ -133,13 +154,20 @@ function AppContent() {
       if (!response.ok) throw new Error("GitHub API Error");
       
       const data = await response.json();
-      const fileContent = data.files["dutch_lab_history.json"]?.content;
       
-      if (fileContent) {
-        localStorage.setItem('dutchLabHistory', fileContent);
-        alert("Successfully pulled history from GitHub Cloud!");
+      // Try new combined format first
+      if (data.files["dutch_lab_data.json"]) {
+        const payload = JSON.parse(data.files["dutch_lab_data.json"].content);
+        if (payload.history) localStorage.setItem('dutchLabHistory', JSON.stringify(payload.history));
+        if (payload.topics) localStorage.setItem('customTopics', JSON.stringify(payload.topics));
+        alert("Successfully pulled history and topic bank from GitHub Cloud!");
+      } 
+      // Fallback to old format
+      else if (data.files["dutch_lab_history.json"]) {
+        localStorage.setItem('dutchLabHistory', data.files["dutch_lab_history.json"].content);
+        alert("Successfully pulled legacy history from GitHub Cloud!");
       } else {
-        alert("No history file found in that Gist.");
+        alert("No app data found in that Gist.");
       }
     } catch (err) {
       console.error(err);
@@ -205,6 +233,9 @@ function AppContent() {
             instructions={phase1Instructions} setInstructions={setPhase1Instructions}
             result={phase1Result} setResult={setPhase1Result} 
             handlePushToCloud={handlePushToCloud}
+            onOpenTopicBank={() => setIsTopicBankOpen(true)}
+            history={history}
+            onLoadHistory={handleLoadHistory}
           />
         ) : (
           <Phase2 
@@ -219,9 +250,21 @@ function AppContent() {
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
       <HistoryModal 
         isOpen={isHistoryOpen} 
-        onClose={() => setIsHistoryOpen(false)} 
+        onClose={() => {
+          setIsHistoryOpen(false);
+          const saved = localStorage.getItem('dutchLabHistory');
+          setHistory(saved ? JSON.parse(saved) : []);
+        }} 
         onLoad={handleLoadHistory}
         onDeletePush={handlePushToCloud}
+      />
+      <TopicBankModal
+        isOpen={isTopicBankOpen}
+        onClose={() => setIsTopicBankOpen(false)}
+        onSelect={setPhase1Topic}
+        history={history}
+        level={phase1Level}
+        onTopicPush={handlePushToCloud}
       />
     </div>
   );

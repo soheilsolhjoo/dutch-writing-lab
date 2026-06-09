@@ -1,19 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApi } from '../context/ApiContext';
 import { generateMasterText, type GenerationResult } from '../services/gemini';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TaggedText } from './TaggedText';
-
-const TOPICS = [
-  "Do you agree or disagree: It is better to make mistakes and learn from them than to avoid making mistakes altogether?",
-  "Some people prefer to live in a small town. Others prefer to live in a big city. Which place would you prefer to live in?",
-  "Do you agree or disagree: Technology has made children less creative than they were in the past.",
-  "Some people believe that university education should be free for everyone. Others think that students should pay higher education fees. Discuss both views.",
-  "Do you agree or disagree: The best way to increase a country's economic growth is to invest in education.",
-  "What is the most important characteristic a good leader must have?",
-  "Do you agree or disagree: It is more important to keep your old friends than it is to make new friends."
-];
+import { type HistoryItem } from './HistoryModal';
 
 interface Phase1Props {
   level: string;
@@ -25,6 +16,9 @@ interface Phase1Props {
   result: GenerationResult | null;
   setResult: (res: GenerationResult | null) => void;
   handlePushToCloud: () => Promise<void>;
+  onOpenTopicBank: () => void;
+  history: HistoryItem[];
+  onLoadHistory: (item: HistoryItem) => void;
 }
 
 export const Phase1: React.FC<Phase1Props> = ({ 
@@ -32,9 +26,12 @@ export const Phase1: React.FC<Phase1Props> = ({
   topic, setTopic, 
   instructions, setInstructions, 
   result, setResult,
-  handlePushToCloud
+  handlePushToCloud,
+  onOpenTopicBank,
+  history,
+  onLoadHistory
 }) => {
-  const { apiMode, geminiModel, apiKey, gcpProjectId, isConfigured, githubToken, paragraphCount, wordCount } = useApi();
+  const { apiMode, geminiModel, apiKey, gcpProjectId, isConfigured, githubToken, paragraphCount, wordCount, customTopics, setCustomTopics } = useApi();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,10 +40,15 @@ export const Phase1: React.FC<Phase1Props> = ({
   const [showVerbs, setShowVerbs] = useState(false);
   const [showIdioms, setShowIdioms] = useState(false);
 
-  const handleSuggestTopic = () => {
-    const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
-    setTopic(randomTopic);
-  };
+  // Check for history matches when topic changes
+  const [historyMatches, setHistoryMatches] = useState<HistoryItem[]>([]);
+  useEffect(() => {
+    if (topic.trim()) {
+      setHistoryMatches(history.filter(h => h.topic === topic));
+    } else {
+      setHistoryMatches([]);
+    }
+  }, [topic, history]);
 
   const handleGenerate = async () => {
     if (!topic) return;
@@ -120,6 +122,14 @@ export const Phase1: React.FC<Phase1Props> = ({
     window.speechSynthesis.speak(utterance);
   };
 
+  const handleSaveTopic = () => {
+    if (topic.trim() && !customTopics.includes(topic.trim())) {
+      setCustomTopics([topic.trim(), ...customTopics]);
+      alert("Topic saved to bank!");
+      setTimeout(handlePushToCloud, 0);
+    }
+  };
+
   return (
     <div className="phase-container">
       <h2>Phase 1: Generate Master Text</h2>
@@ -144,8 +154,34 @@ export const Phase1: React.FC<Phase1Props> = ({
               onChange={(e) => setTopic(e.target.value)}
               placeholder="Enter a topic..."
             />
-            <button type="button" onClick={handleSuggestTopic} className="btn-secondary">Suggest</button>
+            {!customTopics.includes(topic.trim()) && topic.trim() !== '' && (
+              <button type="button" onClick={handleSaveTopic} className="btn-secondary" title="Save topic to bank">
+                ⭐ Save
+              </button>
+            )}
+            <button type="button" onClick={onOpenTopicBank} className="btn-secondary">
+              📚 Topic Bank
+            </button>
           </div>
+          {historyMatches.length > 0 && (
+            <div style={{ marginTop: '10px', padding: '10px', backgroundColor: 'var(--warning-bg)', borderRadius: '6px', border: '1px solid var(--warning)' }}>
+              <strong style={{ color: 'var(--warning-text)', display: 'block', marginBottom: '5px' }}>💡 Found in your History:</strong>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                {historyMatches.map(match => (
+                  <div key={match.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9em' }}>
+                    <span>📄 {match.level} Level Essay (Generated {new Date(match.timestamp).toLocaleDateString()})</span>
+                    <button 
+                      onClick={() => onLoadHistory(match)}
+                      className="btn-secondary"
+                      style={{ padding: '2px 8px', fontSize: '0.85em' }}
+                    >
+                      Load
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
